@@ -34,8 +34,8 @@
         android:background="@drawable/notification_header_bg"
     >
         <com.android.systemui.statusbar.powerwidget.PowerWidget android:id="@+id/exp_power_stat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
         />
 
         <RelativeLayout
@@ -88,7 +88,12 @@
                 android:src="@drawable/ic_notify_clear"
                 android:contentDescription="@string/accessibility_clear_all"
                 />            
-        </RelativeLayout>
+        </RelativeLayout>    
+    <include layout="@layout/quick_toggles" 
+                android:id="@+id/quick_toggles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
     </LinearLayout>
 
     <View
