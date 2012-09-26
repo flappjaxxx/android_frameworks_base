@@ -24,8 +24,9 @@ import com.android.internal.R;
 import android.app.ActivityManagerNative;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Profile;
-import android.app.ProfileManager;
+/** import android.app.Profile;
+import android.app.ProfileManager; */
+import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -107,7 +108,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mHasVibrator;
 
     private IWindowManager mIWindowManager;
-    private Profile mChosenProfile;
+//    private Profile mChosenProfile;
 
     private static final String POWER_MENU_SCREENSHOT_ENABLED = "power_menu_screenshot_enabled";
 
@@ -280,34 +281,34 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         // next: profile
         // only shown if both system profiles and the menu item is enabled, enabled by default
-        if ((Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.SYSTEM_PROFILES_ENABLED, 1) == 1) &&
-                (Settings.System.getInt(mContext.getContentResolver(),
-                        Settings.System.POWER_MENU_PROFILES_ENABLED, 1) == 1)) {
-            mItems.add(
-                new ProfileChooseAction() {
-                    public void onPress() {
-                        createProfileDialog();
-                    }
-
-                    public boolean onLongPress() {
-                        return true;
-                    }
-
-                    public boolean showDuringKeyguard() {
-                        return false;
-                    }
-
-                    public boolean showBeforeProvisioning() {
-                        return false;
-                    }
-                });
-        }
+      //  if ((Settings.System.getInt(mContext.getContentResolver(),
+   //  /           Settings.System.SYSTEM_PROFILES_ENABLED, 1) == 1) &&
+     //           (Settings.System.getInt(mContext.getContentResolver(),
+       //                 Settings.System.POWER_MENU_PROFILES_ENABLED, 1) == 1)) {
+         //   mItems.add(
+           //     new ProfileChooseAction() {
+             //       public void onPress() {
+               //         createProfileDialog();
+                 //   }
+//
+  //                  public boolean onLongPress() {
+    //                    return true;
+      //              }
+//
+  //                  public boolean showDuringKeyguard() {
+    //                    return false;
+      //              }
+//
+  //                  public boolean showBeforeProvisioning() {
+    //                    return false;
+      //              }
+        //        });
+//        }
 
         // next: screenshot
         // only shown if enabled, disabled by default
         if (Settings.System.getInt(mContext.getContentResolver(),
-                POWER_MENU_SCREENSHOT_ENABLED, 0) == 1) {
+                POWER_MENU_SCREENSHOT_ENABLED, 1) == 1) {
             mItems.add(
                 new SinglePressAction(R.drawable.ic_lock_screenshot, R.string.global_action_screenshot) {
                     public void onPress() {
@@ -394,50 +395,50 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         return dialog;
     }
 
-    private void createProfileDialog(){
-        final ProfileManager profileManager = (ProfileManager)mContext.getSystemService(Context.PROFILE_SERVICE);
-
-        final Profile[] profiles = profileManager.getProfiles();
-        UUID activeProfile = profileManager.getActiveProfile().getUuid();
-        final CharSequence[] names = new CharSequence[profiles.length];
-
-        int i=0;
-        int checkedItem = 0;
-
-        for(Profile profile : profiles) {
-            if(profile.getUuid().equals(activeProfile)) {
-                checkedItem = i;
-                mChosenProfile = profile;
-            }
-            names[i++] = profile.getName();
-        }
-
-        final AlertDialog.Builder ab = new AlertDialog.Builder(getUiContext());
-
-        AlertDialog dialog = ab
-                .setTitle(R.string.global_action_choose_profile)
-                .setSingleChoiceItems(names, checkedItem, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which < 0)
-                            return;
-                        mChosenProfile = profiles[which];
-                    }
-                })
-                .setPositiveButton(com.android.internal.R.string.yes,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                profileManager.setActiveProfile(mChosenProfile.getUuid());
-                            }
-                        })
-                .setNegativeButton(com.android.internal.R.string.no,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                }).create();
-        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
-        dialog.show();
-    }
+ //   private void createProfileDialog(){
+   //     final ProfileManager profileManager = (ProfileManager)mContext.getSystemService(Context.PROFILE_SERVICE);
+//
+  //      final Profile[] profiles = profileManager.getProfiles();
+    //    UUID activeProfile = profileManager.getActiveProfile().getUuid();
+      //  final CharSequence[] names = new CharSequence[profiles.length];
+//
+  //      int i=0;
+    //    int checkedItem = 0;
+//
+  //      for(Profile profile : profiles) {
+    //        if(profile.getUuid().equals(activeProfile)) {
+      //          checkedItem = i;
+        //        mChosenProfile = profile;
+          //  }
+            //names[i++] = profile.getName();
+        //}
+//
+  //      final AlertDialog.Builder ab = new AlertDialog.Builder(getUiContext());
+//
+  //      AlertDialog dialog = ab
+    //            .setTitle(R.string.global_action_choose_profile)
+      //          .setSingleChoiceItems(names, checkedItem, new DialogInterface.OnClickListener() {
+        //            public void onClick(DialogInterface dialog, int which) {
+          //              if (which < 0)
+            //                return;
+              //          mChosenProfile = profiles[which];
+                //    }
+//                })
+  //              .setPositiveButton(com.android.internal.R.string.yes,
+    //                    new DialogInterface.OnClickListener() {
+      //                      public void onClick(DialogInterface dialog, int which) {
+        //                        profileManager.setActiveProfile(mChosenProfile.getUuid());
+          //                  }
+            //            })
+              //  .setNegativeButton(com.android.internal.R.string.no,
+                //        new DialogInterface.OnClickListener() {
+                  //          public void onClick(DialogInterface dialog, int which) {
+                    //            dialog.cancel();
+                      //      }
+//                }).create();
+//        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
+//        dialog.show();
+//    }
 
     /**
      * functions needed for taking screenhots.  
@@ -718,7 +719,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
      * A single press action maintains no state, just responds to a press
      * and takes an action.
      */
-    private abstract class ProfileChooseAction implements Action {
+/**    private abstract class ProfileChooseAction implements Action {
         private ProfileManager mProfileManager;
 
         protected ProfileChooseAction() {
@@ -753,7 +754,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
             return v;
         }
-    }
+    } */
 
     /**
      * A toggle action knows whether it is on or off, and displays an icon
