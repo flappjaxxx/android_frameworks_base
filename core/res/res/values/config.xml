@@ -916,7 +916,7 @@
     <integer name="config_screenOnAnimation">-1</integer>
 
     <!-- True will enable the electron beam screen-off animation. -->
-    <bool name="config_screenOffAnimation">true</bool>
+    <bool name="config_screenOffAnimation">false</bool>
 
     <!-- Timeout in MS for how long you have to long-press the back key to
          kill the foreground app. -->
