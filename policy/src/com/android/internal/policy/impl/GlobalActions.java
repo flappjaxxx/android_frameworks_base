@@ -20,8 +20,8 @@ package com.android.internal.policy.impl;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Profile;
-import android.app.ProfileManager;
+/** import android.app.Profile;
+import android.app.ProfileManager; */
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -93,7 +93,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private ToggleAction.State mAirplaneState = ToggleAction.State.Off;
     private boolean mIsWaitingForEcmExit = false;
 
-    private Profile mChosenProfile;
+//    private Profile mChosenProfile;
 
     /**
      * @param context everything needs a context :(
@@ -229,7 +229,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
             });
 
-        // next: profile
+        /** next: profile
         mItems.add(
             new ProfileChooseAction() {
                 public void onPress() {
@@ -243,7 +243,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 public boolean showBeforeProvisioning() {
                     return false;
                 }
-            });
+            }); */
 
         // next: screenshot
         mItems.add(
@@ -286,7 +286,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         return dialog;
     }
 
-    private void createProfileDialog(){
+/**    private void createProfileDialog(){
         final ProfileManager profileManager = (ProfileManager)mContext.getSystemService(Context.PROFILE_SERVICE);
 
         final Profile[] profiles = profileManager.getProfiles();
@@ -329,7 +329,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }).create();
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
         dialog.show();
-    }
+    } */
 
     /**
      * functions needed for taking screenhots.  
@@ -586,7 +586,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     /**
      * A single press action maintains no state, just responds to a press
      * and takes an action.
-     */
+     
     private abstract class ProfileChooseAction implements Action {
         private ProfileManager mProfileManager;
 
@@ -617,7 +617,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
             return v;
         }
-    }
+    } */
 
     /**
      * A toggle action knows whether it is on or off, and displays an icon
