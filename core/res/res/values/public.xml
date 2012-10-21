@@ -3931,7 +3931,4 @@
   <!-- HW rotation lock -->
   <java-symbol type="string" name="toast_rotation_unlocked" />
   <java-symbol type="string" name="toast_rotation_locked" />
-
-  <!-- Stylus gestures -->
-  <java-symbol type="bool" name="config_stylusGestures" />
 </resources>
