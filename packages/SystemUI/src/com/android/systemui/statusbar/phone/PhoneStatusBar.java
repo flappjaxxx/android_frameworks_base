@@ -269,25 +269,6 @@ public class PhoneStatusBar extends StatusBar {
 
     DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
-    class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.SCREEN_BRIGHTNESS_MODE), false, this);
-            update();
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            update();
-        }
-
         public void update() {
             ContentResolver resolver = mContext.getContentResolver();
             mBrightnessControl = Settings.System.getInt(resolver,
