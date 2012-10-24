@@ -269,16 +269,6 @@ public class PhoneStatusBar extends StatusBar {
 
     DisplayMetrics mDisplayMetrics = new DisplayMetrics();
 
-        public void update() {
-            ContentResolver resolver = mContext.getContentResolver();
-            mBrightnessControl = Settings.System.getInt(resolver,
-                    Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, 0) != 0;
-            mAutoBrightness = Settings.System.getInt(resolver,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE, 0) ==
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
-        }
-    }
-
     private class ExpandedDialog extends Dialog {
         ExpandedDialog(Context context) {
             super(context, com.android.internal.R.style.Theme_Translucent_NoTitleBar);
