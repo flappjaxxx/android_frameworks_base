@@ -2748,6 +2748,9 @@ void AudioFlinger::MixerThread::deleteTrackName_l(int name)
 bool AudioFlinger::MixerThread::checkForNewParameters_l()
 {
     bool reconfig = false;
+#ifdef STE_HARDWARE
+    bool updateLatency = false;
+#endif
 
     while (!mNewParameters.isEmpty()) {
         status_t status = NO_ERROR;
@@ -2811,6 +2814,11 @@ bool AudioFlinger::MixerThread::checkForNewParameters_l()
                 mEffectChains[i]->setDevice_l(mDevice);
             }
         }
+#ifdef STE_HARDWARE
+        if (param.getInt(String8(AudioParameter::keyLatency), value) == NO_ERROR) {
+            updateLatency = true;
+        }
+#endif
 
         if (status == NO_ERROR) {
             status = mOutput->stream->common.set_parameters(&mOutput->stream->common,
@@ -2837,6 +2845,11 @@ bool AudioFlinger::MixerThread::checkForNewParameters_l()
                 }
                 sendConfigEvent_l(AudioSystem::OUTPUT_CONFIG_CHANGED);
             }
+#ifdef STE_HARDWARE
+            if (status == NO_ERROR && updateLatency) {
+                sendConfigEvent_l(AudioSystem::OUTPUT_CONFIG_CHANGED);
+            }
+#endif
         }
 
         mNewParameters.removeAt(0);
@@ -4810,27 +4823,10 @@ bool AudioFlinger::RecordThread::threadLoop()
                         if (framesOut && mFrameCount == mRsmpInIndex) {
                             if (framesOut == mFrameCount &&
                                 ((int)mChannelCount == mReqChannelCount || mFormat != AUDIO_FORMAT_PCM_16_BIT)) {
-#ifdef STE_AUDIO
-                                mBytesRead = mAudioFlinger->readInput((uint32_t*) mInput,
-                                                                      (uint32_t)mInputClientId,
-                                                                      buffer.raw,
-                                                                      mInputBytes,
-                                                                      NULL);
-#else
                                 mBytesRead = mInput->stream->read(mInput->stream, buffer.raw, mInputBytes);
-#endif
                                 framesOut = 0;
                             } else {
-#ifdef STE_AUDIO
-                                mBytesRead = mAudioFlinger->readInput((uint32_t*) mInput,
-                                                                      (uint32_t)mInputClientId,
-                                                                      mRsmpInBuffer,
-                                                                      mInputBytes,
-                                                                      NULL);
-
-#else
                                 mBytesRead = mInput->stream->read(mInput->stream, mRsmpInBuffer, mInputBytes);
-#endif
                                 mRsmpInIndex = 0;
                             }
                             if (mBytesRead < 0) {
@@ -5078,15 +5074,7 @@ status_t AudioFlinger::RecordThread::getNextBuffer(AudioBufferProvider::Buffer* 
     int channelCount;
 
     if (framesReady == 0) {
-#ifdef STE_AUDIO
-        mBytesRead = mAudioFlinger->readInput((uint32_t*) mInput,
-                                              (uint32_t)mInputClientId,
-                                              mRsmpInBuffer,
-                                              mInputBytes,
-                                              NULL);
-#else
         mBytesRead = mInput->stream->read(mInput->stream, mRsmpInBuffer, mInputBytes);
-#endif
         if (mBytesRead < 0) {
             LOGE("RecordThread::getNextBuffer() Error reading audio input");
             if (mActiveTrack->mState == TrackBase::ACTIVE) {
