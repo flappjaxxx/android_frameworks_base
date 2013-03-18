@@ -38,10 +38,12 @@ import static com.android.internal.util.cm.QSConstants.TILE_SLEEP;
 import static com.android.internal.util.cm.QSConstants.TILE_SYNC;
 import static com.android.internal.util.cm.QSConstants.TILE_TORCH;
 import static com.android.internal.util.cm.QSConstants.TILE_USER;
+import static com.android.internal.util.cm.QSConstants.TILE_VOLUME;
 import static com.android.internal.util.cm.QSConstants.TILE_WIFI;
 import static com.android.internal.util.cm.QSConstants.TILE_WIFIAP;
 import static com.android.internal.util.cm.QSConstants.TILE_WIMAX;
 import static com.android.internal.util.cm.QSUtils.deviceSupportsBluetooth;
+import static com.android.internal.util.cm.QSUtils.deviceSupportsImeSwitcher;
 import static com.android.internal.util.cm.QSUtils.deviceSupportsTelephony;
 import static com.android.internal.util.cm.QSUtils.deviceSupportsUsbTether;
 import static com.android.internal.util.cm.QSUtils.systemProfilesEnabled;
@@ -85,6 +87,7 @@ import com.android.systemui.quicksettings.ToggleLockscreenTile;
 import com.android.systemui.quicksettings.TorchTile;
 import com.android.systemui.quicksettings.UsbTetherTile;
 import com.android.systemui.quicksettings.UserTile;
+import com.android.systemui.quicksettings.VolumeTile;
 import com.android.systemui.quicksettings.WiFiDisplayTile;
 import com.android.systemui.quicksettings.WiFiTile;
 import com.android.systemui.quicksettings.WifiAPTile;
@@ -111,7 +114,7 @@ public class QuickSettingsController {
     private ContentObserver mObserver;
     public PhoneStatusBar mStatusBarService;
 
-    private InputMethodTile IMETile;
+    private InputMethodTile mIMETile;
 
     public QuickSettingsController(Context context, QuickSettingsContainerView container, PhoneStatusBar statusBarService) {
         mContext = context;
@@ -122,6 +125,8 @@ public class QuickSettingsController {
     }
 
     void loadTiles() {
+        // Reset reference tiles
+        mIMETile = null;
 
         // Filter items not compatible with device
         boolean bluetoothSupported = deviceSupportsBluetooth();
@@ -204,6 +209,8 @@ public class QuickSettingsController {
                 qs = new LteTile(mContext, inflater, mContainerView, this);
             } else if (tile.equals(TILE_QUIETHOURS)) {
                 qs = new QuietHoursTile(mContext, inflater, mContainerView, this);
+            } else if (tile.equals(TILE_VOLUME)) {
+                qs = new VolumeTile(mContext, inflater, mContainerView, this, mHandler);
             }
             if (qs != null) {
                 qs.setupQuickSettingsTile();
@@ -229,10 +236,10 @@ public class QuickSettingsController {
             qs.setupQuickSettingsTile();
             mQuickSettingsTiles.add(qs);
         }
-        if (Settings.System.getInt(resolver, Settings.System.QS_DYNAMIC_IME, 1) == 1) {
-            QuickSettingsTile qs = new InputMethodTile(mContext, inflater, mContainerView, this);
-            qs.setupQuickSettingsTile();
-            mQuickSettingsTiles.add(qs);
+        if (deviceSupportsImeSwitcher(mContext) && Settings.System.getInt(resolver, Settings.System.QS_DYNAMIC_IME, 1) == 1) {
+            mIMETile = new InputMethodTile(mContext, inflater, mContainerView, this);
+            mIMETile.setupQuickSettingsTile();
+            mQuickSettingsTiles.add(mIMETile);
         }
         if (deviceSupportsUsbTether(mContext) && Settings.System.getInt(resolver, Settings.System.QS_DYNAMIC_USBTETHER, 1) == 1) {
             QuickSettingsTile qs = new UsbTetherTile(mContext, inflater, mContainerView, this);
@@ -333,8 +340,8 @@ public class QuickSettingsController {
     }
 
     public void setImeWindowStatus(boolean visible) {
-        if (IMETile != null) {
-            IMETile.toggleVisibility(visible);
+        if (mIMETile != null) {
+            mIMETile.toggleVisibility(visible);
         }
     }
 
